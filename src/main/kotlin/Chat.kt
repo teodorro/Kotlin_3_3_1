@@ -5,7 +5,7 @@ class Chat(
 ) {
     init {
         if (userId1 == userId2)
-            throw IllegalArgumentException("userId1 should not be equal to userId2");
+            throw IllegalArgumentException("userId1 should not be equal to userId2")
     }
     var messages = mutableListOf<Message>()
 
@@ -15,7 +15,7 @@ class Chat(
         if (userId != userId2 && userId != userId1)
             return -1
 
-        var message = Message(ChatService.getNextId(), userId, text)
+        val message = Message(IdCreator.getNextId(), userId, text)
         messages.add(message)
 
         messages.filter { x -> x.userWrittenById != userId }
@@ -29,8 +29,8 @@ class Chat(
             return false
 
         if (messages.any { x -> x.id == messageId }) {
-            val message = messages.first { x -> x.id == messageId }
-            messages.remove(message)
+            messages.remove(
+                messages.first { x -> x.id == messageId })
         }
         return true
     }
@@ -42,8 +42,7 @@ class Chat(
             return false
 
         if (messages.any { x -> x.id == messageId }) {
-            var message = messages.first { x -> x.id == messageId }
-            message.text = text
+            messages.first { x -> x.id == messageId }.text = text
             return true
         }
         return false

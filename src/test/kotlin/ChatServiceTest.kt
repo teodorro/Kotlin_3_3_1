@@ -6,35 +6,37 @@ class ChatServiceTest {
     // region createMessage
     @Test
     fun createMessage_OkIfNoChatExists(){
-        var message = ChatService.createMessage(123, 234, "asd")
+        var message = ChatService().createMessage(123, 234, "asd")
 
         assertNotNull(message)
     }
 
     @Test
     fun createMessage_OkIfChatExists(){
-        ChatService.createMessage(123, 234, "asd")
-        var message2 = ChatService.createMessage(123, 234, "ewq")
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
+        var message2 = chatService.createMessage(123, 234, "ewq")
 
         assertNotNull(message2)
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun createMessage_ExceptionIfDuplicateUserIds(){
-        ChatService.createMessage(123, 123, "asd")
+        ChatService().createMessage(123, 123, "asd")
     }
 
     @Test (expected = IllegalArgumentException::class)
     fun createMessage_ExceptionIfBlankText(){
-        ChatService.createMessage(123, 234, " ")
+        ChatService().createMessage(123, 234, " ")
     }
 
     @Test
     fun createMessage_UserIdsOrderDoesntMatter(){
-        ChatService.createMessage(123, 234, "asd")
-        ChatService.createMessage(234, 123, "ewq")
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
+        chatService.createMessage(234, 123, "ewq")
 
-        var chats = ChatService.getChats(123)
+        var chats = chatService.getChats(123)
 
         assertEquals(1, chats.size)
     }
@@ -44,16 +46,17 @@ class ChatServiceTest {
     // region getChats
     @Test
     fun getChats_ChatsExist(){
-        ChatService.createMessage(123, 234, "asd")
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
 
-        var chats = ChatService.getChats(123)
+        var chats = chatService.getChats(123)
 
         assertEquals(1, chats.size)
     }
 
     @Test
     fun getChats_ChatsNotExist(){
-        var chats = ChatService.getChats(1234)
+        var chats = ChatService().getChats(1234)
 
         assertEquals(0, chats.size)
     }
@@ -62,81 +65,88 @@ class ChatServiceTest {
     // region getMessages
     @Test
     fun getMessages_Simple(){
-        ChatService.createMessage(123, 234, "asd")
-        var messageId = ChatService.createMessage(123, 234, "qwe")
-        ChatService.createMessage(123, 234, "zxc")
-        ChatService.createMessage(123, 234, "ert")
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
+        var messageId = chatService.createMessage(123, 234, "qwe")
+        chatService.createMessage(123, 234, "zxc")
+        chatService.createMessage(123, 234, "ert")
 
-        var messages = ChatService.getMessages(123, ChatService.getChatId(123, 234) as Int, messageId, 2)
+        var messages = chatService.getMessages(123, chatService.getChatId(123, 234) as Int, messageId, 2)
 
         assertEquals(2, messages.size)
     }
 
     @Test
     fun getMessages_UserNotExists(){
-        ChatService.createMessage(123, 234, "asd")
-        var messageId = ChatService.createMessage(123, 234, "qwe")
-        ChatService.createMessage(123, 234, "zxc")
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
+        var messageId = chatService.createMessage(123, 234, "qwe")
+        chatService.createMessage(123, 234, "zxc")
 
-        var messages = ChatService.getMessages(666, ChatService.getChatId(123, 234) as Int, messageId, 2)
+        var messages = chatService.getMessages(666, chatService.getChatId(123, 234) as Int, messageId, 2)
 
         assertEquals(0, messages.size)
     }
 
     @Test
     fun getMessages_ChatNotExists(){
-        ChatService.createMessage(123, 234, "asd")
-        var messageId = ChatService.createMessage(123, 234, "qwe")
-        ChatService.createMessage(123, 234, "zxc")
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
+        var messageId = chatService.createMessage(123, 234, "qwe")
+        chatService.createMessage(123, 234, "zxc")
 
-        var messages = ChatService.getMessages(123, 666, messageId, 2)
+        var messages = chatService.getMessages(123, 666, messageId, 2)
 
         assertEquals(0, messages.size)
     }
 
     @Test
     fun getMessages_MessageStartFromNotExists(){
-        ChatService.createMessage(123, 234, "asd")
-        ChatService.createMessage(123, 234, "qwe")
-        ChatService.createMessage(123, 234, "zxc")
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
+        chatService.createMessage(123, 234, "qwe")
+        chatService.createMessage(123, 234, "zxc")
 
-        var messages = ChatService.getMessages(123, ChatService.getChatId(123, 234) as Int, 666, 2)
+        var messages = chatService.getMessages(123, chatService.getChatId(123, 234) as Int, 666, 2)
 
         assertEquals(0, messages.size)
     }
 
     @Test
     fun getMessages_AmountTooLarge(){
-        ChatService.createMessage(123, 234, "asd")
-        var messageId = ChatService.createMessage(123, 234, "qwe")
-        ChatService.createMessage(123, 234, "zxc")
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
+        var messageId = chatService.createMessage(123, 234, "qwe")
+        chatService.createMessage(123, 234, "zxc")
 
-        var messages = ChatService.getMessages(123, ChatService.getChatId(123, 234) as Int, messageId, 100500)
+        var messages = chatService.getMessages(123, chatService.getChatId(123, 234) as Int, messageId, 100500)
 
         assertEquals(2, messages.size)
     }
 
     @Test
     fun getMessages_AmountTooSmall(){
-        ChatService.createMessage(123, 234, "asd")
-        var messageId = ChatService.createMessage(123, 234, "qwe")
-        ChatService.createMessage(123, 234, "zxc")
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
+        var messageId = chatService.createMessage(123, 234, "qwe")
+        chatService.createMessage(123, 234, "zxc")
 
-        var messages = ChatService.getMessages(123, 666, messageId, 2)
+        var messages = chatService.getMessages(123, 666, messageId, 2)
 
         assertEquals(0, messages.size)
     }
 
     @Test
     fun getMessages_InvokingMakesMessagesRead(){
-        var messageId = ChatService.createMessage(123, 234, "asd")
-        ChatService.createMessage(123, 234, "qwe")
-        val chatId = ChatService.getChatId(123, 234) as Int
+        val chatService = ChatService();
+        var messageId = chatService.createMessage(123, 234, "asd")
+        chatService.createMessage(123, 234, "qwe")
+        val chatId = chatService.getChatId(123, 234) as Int
 
-        var messagesUser1 = ChatService.getMessages(123, chatId, messageId, 2)
+        var messagesUser1 = chatService.getMessages(123, chatId, messageId, 2)
         messagesUser1.forEach { x -> assertFalse(x.readByAnotherUser) }
 
-        var messagesUser2 = ChatService.getMessages(234, chatId, messageId, 2)
+        var messagesUser2 = chatService.getMessages(234, chatId, messageId, 2)
         messagesUser2.forEach { x -> assertTrue(x.readByAnotherUser) }
     }
 
@@ -146,27 +156,30 @@ class ChatServiceTest {
 
     @Test
     fun deleteChat_Simple(){
-        ChatService.createMessage(123, 234, "asd")
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
 
-        var res = ChatService.deleteChat(123, ChatService.getChatId(123, 234) as Int)
+        var res = chatService.deleteChat(123, chatService.getChatId(123, 234) as Int)
 
         assertTrue(res)
     }
 
     @Test
     fun deleteChat_UserNotExists(){
-        ChatService.createMessage(123, 234, "asd")
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
 
-        var res = ChatService.deleteChat(666, ChatService.getChatId(123, 234) as Int)
+        var res = chatService.deleteChat(666, chatService.getChatId(123, 234) as Int)
 
         assertFalse(res)
     }
 
     @Test
     fun deleteChat_ChatNotExists(){
-        ChatService.createMessage(123, 234, "asd")
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
 
-        var res = ChatService.deleteChat(123, 666)
+        var res = chatService.deleteChat(123, 666)
 
         assertFalse(res)
     }
@@ -177,47 +190,52 @@ class ChatServiceTest {
 
     @Test
     fun deleteMessage_Simple(){
-        var messageId = ChatService.createMessage(125, 236, "asd")
-        ChatService.createMessage(125, 236, "qwe")
+        val chatService = ChatService();
+        var messageId = chatService.createMessage(125, 236, "asd")
+        chatService.createMessage(125, 236, "qwe")
 
-        var res = ChatService.deleteMessage(125, ChatService.getChatId(125, 236) as Int, messageId)
+        var res = chatService.deleteMessage(125, chatService.getChatId(125, 236) as Int, messageId)
 
         assertTrue(res)
     }
 
     @Test
     fun deleteMessage_UserNotExists(){
-        var messageId = ChatService.createMessage(123, 234, "asd")
+        val chatService = ChatService();
+        var messageId = chatService.createMessage(123, 234, "asd")
 
-        var res = ChatService.deleteMessage(666, ChatService.getChatId(123, 234) as Int, messageId)
+        var res = chatService.deleteMessage(666, chatService.getChatId(123, 234) as Int, messageId)
 
         assertFalse(res)
     }
 
     @Test
     fun deleteMessage_ChatNotExists(){
-        var messageId = ChatService.createMessage(123, 234, "asd")
+        val chatService = ChatService();
+        var messageId = chatService.createMessage(123, 234, "asd")
 
-        var res = ChatService.deleteMessage(123, 666, messageId)
+        var res = chatService.deleteMessage(123, 666, messageId)
 
         assertFalse(res)
     }
 
     @Test
     fun deleteMessage_MessageNotExists(){
-        var messageId = ChatService.createMessage(123, 234, "asd")
+        val chatService = ChatService();
+        var messageId = chatService.createMessage(123, 234, "asd")
 
-        var res = ChatService.deleteMessage(123, ChatService.getChatId(123, 234) as Int, messageId + 1)
+        var res = chatService.deleteMessage(123, chatService.getChatId(123, 234) as Int, messageId + 1)
 
         assertTrue(res)
     }
 
     @Test
     fun deleteMessage_EmptyChatWasDeleted(){
-        var messageId = ChatService.createMessage(123, 234, "asd")
+        val chatService = ChatService();
+        var messageId = chatService.createMessage(123, 234, "asd")
 
-        ChatService.deleteMessage(123, ChatService.getChatId(123, 234) as Int, messageId)
-        var chatExists = ChatService.getChats(123).any { x -> x.id == ChatService.getChatId(123, 234) as Int }
+        chatService.deleteMessage(123, chatService.getChatId(123, 234) as Int, messageId)
+        var chatExists = chatService.getChats(123).any { x -> x.id == chatService.getChatId(123, 234) as Int }
 
         assertFalse(chatExists)
     }
@@ -229,40 +247,43 @@ class ChatServiceTest {
 
     @Test
     fun getUnreadChats_UnreadMessagesExist(){
-        ChatService.createMessage(123, 234, "asd")
-        ChatService.getMessages(234, ChatService.getChatId(123, 234) as Int, 0, 1)
-        ChatService.createMessage(567, 234, "xzc")
-        ChatService.createMessage(123, 234, "qwe")
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
+        chatService.getMessages(234, chatService.getChatId(123, 234) as Int, 0, 1)
+        chatService.createMessage(567, 234, "xzc")
+        chatService.createMessage(123, 234, "qwe")
 
-        var chats = ChatService.getUnreadChats(234)
+        var chats = chatService.getUnreadChats(234)
 
         assertEquals(2, chats.size)
     }
 
     @Test
     fun getUnreadChats_AllMessagesRead(){
-        var ind1 = ChatService.createMessage(123, 234, "asd")
-        var ind2 = ChatService.createMessage(567, 234, "xzc")
-        ChatService.getMessages(234, ChatService.getChatId(123, 234) as Int, ind1, 1)
-        ChatService.getMessages(234, ChatService.getChatId(567, 234) as Int, ind2, 1)
+        val chatService = ChatService();
+        var ind1 = chatService.createMessage(123, 234, "asd")
+        var ind2 = chatService.createMessage(567, 234, "xzc")
+        chatService.getMessages(234, chatService.getChatId(123, 234) as Int, ind1, 1)
+        chatService.getMessages(234, chatService.getChatId(567, 234) as Int, ind2, 1)
 
-        var chats = ChatService.getUnreadChats(234)
+        var chats = chatService.getUnreadChats(234)
 
         assertEquals(0, chats.size)
     }
 
     @Test
     fun getUnreadChats_UserNotExists(){
-        ChatService.createMessage(123, 234, "asd")
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
 
-        var chats = ChatService.getUnreadChats(666)
+        var chats = chatService.getUnreadChats(666)
 
         assertEquals(0, chats.size)
     }
 
     @Test
     fun getUnreadChats_NoChats(){
-        var chats = ChatService.getUnreadChats(2345)
+        var chats = ChatService().getUnreadChats(2345)
 
         assertEquals(0, chats.size)
     }
@@ -274,12 +295,13 @@ class ChatServiceTest {
 
     @Test
     fun getUnreadChatsCount_ChatsExist(){
-        ChatService.createMessage(123, 234, "asd")
-        ChatService.getMessages(234, ChatService.getChatId(123, 234) as Int, 0, 1)
-        ChatService.createMessage(567, 234, "xzc")
-        ChatService.createMessage(123, 234, "qwe")
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
+        chatService.getMessages(234, chatService.getChatId(123, 234) as Int, 0, 1)
+        chatService.createMessage(567, 234, "xzc")
+        chatService.createMessage(123, 234, "qwe")
 
-        var num = ChatService.getUnreadChatsCount(234)
+        var num = chatService.getUnreadChatsCount(234)
 
         assertEquals(2, num)
     }
@@ -287,7 +309,7 @@ class ChatServiceTest {
 
     @Test
     fun getUnreadChatsCount_NoChats(){
-        var chats = ChatService.getUnreadChats(666)
+        var chats = ChatService().getUnreadChats(666)
 
         assertEquals(0, chats.size)
     }

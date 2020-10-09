@@ -1,15 +1,11 @@
-object ChatService {
-    private var nextId = 1
+class ChatService {
     private var chats = mutableListOf<Chat>()
 
-    fun getNextId(): Int{
-        return nextId++
-    }
 
     fun createMessage(userId: Int, userToId: Int, text: String): Int{
         var chat = chats.firstOrNull { x -> (x.userId1 == userId && x.userId2 == userToId) || (x.userId1 == userToId && x.userId2 == userId)  }
         if (chat == null) {
-            chat = Chat(getNextId(), userId, userToId)
+            chat = Chat(IdCreator.getNextId(), userId, userToId)
             chats.add(chat)
         }
         return chat.createMessage(userId, text)
@@ -35,9 +31,8 @@ object ChatService {
     }
 
     fun deleteChat(userId: Int, chatId: Int): Boolean{
-        var chat = chats.firstOrNull { x -> (x.userId1 == userId || x.userId2 == userId) && chatId == x.id }
-        if (chat == null)
-            return false
+        var chat: Chat? = chats.firstOrNull { x -> (x.userId1 == userId || x.userId2 == userId) && chatId == x.id }
+            ?: return false
         return chats.remove(chat)
     }
 
