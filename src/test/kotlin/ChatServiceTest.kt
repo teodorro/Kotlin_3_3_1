@@ -129,11 +129,20 @@ class ChatServiceTest {
         val chatService = ChatService();
         chatService.createMessage(123, 234, "asd")
         var messageId = chatService.createMessage(123, 234, "qwe")
+
+        var messages = chatService.getMessages(123, chatService.getChatId(123, 234) as Int, messageId, 2)
+
+        assertEquals(1, messages.size)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun getMessages_AmountBelowZero(){
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
+        var messageId = chatService.createMessage(123, 234, "qwe")
         chatService.createMessage(123, 234, "zxc")
 
-        var messages = chatService.getMessages(123, 666, messageId, 2)
-
-        assertEquals(0, messages.size)
+        chatService.getMessages(123, chatService.getChatId(123, 234) as Int, messageId, -2)
     }
 
     @Test
@@ -161,7 +170,7 @@ class ChatServiceTest {
 
         var res = chatService.deleteChat(123, chatService.getChatId(123, 234) as Int)
 
-        assertTrue(res)
+        assertEquals(OperationResult.Success, res)
     }
 
     @Test
@@ -171,7 +180,7 @@ class ChatServiceTest {
 
         var res = chatService.deleteChat(666, chatService.getChatId(123, 234) as Int)
 
-        assertFalse(res)
+        assertEquals(OperationResult.NotFound, res)
     }
 
     @Test
@@ -181,7 +190,7 @@ class ChatServiceTest {
 
         var res = chatService.deleteChat(123, 666)
 
-        assertFalse(res)
+        assertEquals(OperationResult.NotFound, res)
     }
 
     // endregion deleteChat
@@ -196,7 +205,7 @@ class ChatServiceTest {
 
         var res = chatService.deleteMessage(125, chatService.getChatId(125, 236) as Int, messageId)
 
-        assertTrue(res)
+        assertEquals(OperationResult.Success, res)
     }
 
     @Test
@@ -206,7 +215,7 @@ class ChatServiceTest {
 
         var res = chatService.deleteMessage(666, chatService.getChatId(123, 234) as Int, messageId)
 
-        assertFalse(res)
+        assertEquals(OperationResult.NotFound, res)
     }
 
     @Test
@@ -216,7 +225,7 @@ class ChatServiceTest {
 
         var res = chatService.deleteMessage(123, 666, messageId)
 
-        assertFalse(res)
+        assertEquals(OperationResult.NotFound, res)
     }
 
     @Test
@@ -226,7 +235,7 @@ class ChatServiceTest {
 
         var res = chatService.deleteMessage(123, chatService.getChatId(123, 234) as Int, messageId + 1)
 
-        assertTrue(res)
+        assertEquals(OperationResult.NotFound, res)
     }
 
     @Test
@@ -241,7 +250,6 @@ class ChatServiceTest {
     }
 
     // endregion deleteMessage
-
 
     // region getUnreadChats
 
@@ -290,7 +298,6 @@ class ChatServiceTest {
 
     // endregion getUnreadChats
 
-
     // region getUnreadChatsCount
 
     @Test
@@ -306,7 +313,6 @@ class ChatServiceTest {
         assertEquals(2, num)
     }
 
-
     @Test
     fun getUnreadChatsCount_NoChats(){
         var chats = ChatService().getUnreadChats(666)
@@ -315,4 +321,66 @@ class ChatServiceTest {
     }
 
     // endregion getUnreadChatsCount
+
+    // region getLastMessages
+
+    @Test
+    fun getLastMessages_Ok(){
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
+        chatService.createMessage(123, 234, "qwe")
+        chatService.createMessage(123, 234, "zxc")
+
+        var messages = chatService.getLastMessages(123, chatService.getChatId(123, 234) as Int, 2)
+
+        assertEquals(2, messages.size)
+    }
+
+    @Test
+    fun getLastMessages_UserNotFound(){
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
+        chatService.createMessage(123, 234, "qwe")
+        chatService.createMessage(123, 234, "zxc")
+
+        var messages = chatService.getLastMessages(666, chatService.getChatId(123, 234) as Int, 2)
+
+        assertEquals(0, messages.size)
+    }
+
+    @Test
+    fun getLastMessages_ChatNotFound(){
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
+        chatService.createMessage(123, 234, "qwe")
+        chatService.createMessage(123, 234, "zxc")
+
+        var messages = chatService.getLastMessages(123, 666, 2)
+
+        assertEquals(0, messages.size)
+    }
+
+    @Test
+    fun getLastMessages_AmountTooLarge(){
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
+        chatService.createMessage(123, 234, "qwe")
+        chatService.createMessage(123, 234, "zxc")
+
+        var messages = chatService.getLastMessages(123, chatService.getChatId(123, 234) as Int, 4)
+
+        assertEquals(3, messages.size)
+    }
+
+    @Test(expected = java.lang.IllegalArgumentException::class)
+    fun getLastMessages_AmountBelowZero(){
+        val chatService = ChatService();
+        chatService.createMessage(123, 234, "asd")
+        chatService.createMessage(123, 234, "qwe")
+        chatService.createMessage(123, 234, "zxc")
+
+        chatService.getLastMessages(123, chatService.getChatId(123, 234) as Int, -1)
+    }
+
+    // endregion getLastMessages
 }

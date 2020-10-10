@@ -18,33 +18,34 @@ class Chat(
         val message = Message(IdCreator.getNextId(), userId, text)
         messages.add(message)
 
-        messages.filter { x -> x.userWrittenById != userId }
+        messages.asSequence().filter { x -> x.userWrittenById != userId }
             .forEach { x -> x.read(userId) }
 
         return message.id
     }
 
-    fun deleteMessage(userId: Int, messageId: Int): Boolean {
+    fun deleteMessage(userId: Int, messageId: Int): OperationResult {
         if (userId != userId2 && userId != userId1)
-            return false
+            return OperationResult.NotFound
 
         if (messages.any { x -> x.id == messageId }) {
             messages.remove(
                 messages.first { x -> x.id == messageId })
+            return OperationResult.Success
         }
-        return true
+        return OperationResult.NotFound
     }
 
-    fun updateMessage(userId: Int, messageId: Int, text: String): Boolean {
+    fun updateMessage(userId: Int, messageId: Int, text: String): OperationResult {
         if (text.isBlank())
             throw IllegalArgumentException("Message text should not be blank")
         if (userId != userId2 && userId != userId1)
-            return false
+            return OperationResult.NotFound
 
         if (messages.any { x -> x.id == messageId }) {
             messages.first { x -> x.id == messageId }.text = text
-            return true
+            return OperationResult.Success
         }
-        return false
+        return OperationResult.NotFound
     }
 }

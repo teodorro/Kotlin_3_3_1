@@ -60,7 +60,7 @@ class ChatTest {
 
         var res = chat.deleteMessage(1, messageId)
 
-        assertTrue(res)
+        assertEquals(OperationResult.Success, res)
         assertTrue(chat.messages.isEmpty())
     }
 
@@ -71,7 +71,7 @@ class ChatTest {
 
         var res = chat.deleteMessage(3, messageId)
 
-        assertFalse(res)
+        assertEquals(OperationResult.NotFound, res)
         assertFalse(chat.messages.isEmpty())
     }
 
@@ -82,7 +82,7 @@ class ChatTest {
 
         var res = chat.deleteMessage(1, messageId + 1)
 
-        assertTrue(res)
+        assertEquals(OperationResult.NotFound, res)
         assertFalse(chat.messages.isEmpty())
     }
 
@@ -93,7 +93,7 @@ class ChatTest {
 
         var res = chat.updateMessage(1, messageId, "qwe")
 
-        assertTrue(res)
+        assertEquals(OperationResult.Success, res)
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -111,7 +111,7 @@ class ChatTest {
 
         var res = chat.updateMessage(3, messageId, "qwe")
 
-        assertFalse(res)
+        assertEquals(OperationResult.NotFound, res)
     }
 
     @Test
@@ -121,7 +121,7 @@ class ChatTest {
 
         var res = chat.updateMessage(1, messageId + 1, "qwe")
 
-        assertFalse(res)
+        assertEquals(OperationResult.NotFound, res)
     }
 
 
